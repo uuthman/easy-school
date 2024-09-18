@@ -9,3 +9,4 @@ django
 pillow
 pytz
 sqlparse
+psycopg2-binary

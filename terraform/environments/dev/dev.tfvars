@@ -1,0 +1,7 @@
+default_region           = "us-east-1"
+vpc_cidr                 = "10.0.0.0/16"
+infra_env                = "app-dev-tf"
+project_name             = "easy-school"
+subnet_cidr_block        = "10.0.0.0/24"
+subnet_availability_zone = "us-east-1a"
+instance_size            = "t2.micro"
