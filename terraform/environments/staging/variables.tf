@@ -1,20 +1,20 @@
-variable default_region {
-    type = string
-    description = "the region this infrastructure is in"
+variable "default_region" {
+  type        = string
+  description = "the region this infrastructure is in"
 }
 
 variable "vpc_cidr" {
   description = "The CIDR for the vpc"
-  type = string
+  type        = string
 }
-variable infra_env {
-    description = "infrastructure environment"
-    type = string
+variable "infra_env" {
+  description = "infrastructure environment"
+  type        = string
 }
 
 variable "project_name" {
   description = "Project name"
-  type = string
+  type        = string
 }
 
 variable "subnet_cidr_block" {
@@ -27,7 +27,7 @@ variable "subnet_availability_zone" {
   type        = string
 }
 
-variable instance_size {
-    type = string
-    description = "ec2 web server size"
+variable "instance_size" {
+  type        = string
+  description = "ec2 web server size"
 }
