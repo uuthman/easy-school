@@ -24,7 +24,7 @@ runs:
       uses: aws-actions/configure-aws-credentials@v3
       with:
         role-to-assume: ${{ inputs.iam-role }}
-        role-duration-seconds: 7200
+#        role-duration-seconds: 7200
         aws-region: ${{ inputs.region }}
 
     - name: "Terraform Init"
