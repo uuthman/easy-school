@@ -1,0 +1,48 @@
+name: Deploy Prod environment
+
+concurrency:
+  group: deploy-${{ vars.ENVIRONMENT }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm-deploy:
+        type: boolean
+        required: true
+        description: "Set to confirm deploy to the PRODUCTION environment"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-to-prod:
+    if: ${{ github.ref_type == 'tag' && github.event.inputs.confirm-deploy == 'true' }}
+
+    environment: prod
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - name: 'Setup: AWS Login and Terraform init'
+        uses: ./.github/actions/terraform-init
+        with:
+          environment: ${{ vars.ENVIRONMENT }}
+          region: ${{ vars.AWS_REGION }}
+          iam-role: ${{ vars.TF_AWS_ROLE }}
+
+      - name: 'Test: check and validate'
+        uses: ./.github/actions/terraform-test
+        with:
+          environment: ${{ vars.ENVIRONMENT }}
+          region: ${{ vars.AWS_REGION }}
+          iam-role: ${{ vars.TF_AWS_ROLE }}
+
+      - name: 'Deploy: to ${{ vars.ENVIRONMENT }}'
+        uses: ./.github/actions/terraform-apply
+        with:
+          environment: ${{ vars.ENVIRONMENT }}
+          region: ${{ vars.AWS_REGION }}
+          iam-role: ${{ vars.TF_AWS_ROLE }}
