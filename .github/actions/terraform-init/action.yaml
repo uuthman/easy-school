@@ -24,7 +24,6 @@ runs:
       uses: aws-actions/configure-aws-credentials@v2
       with:
         role-to-assume: ${{ inputs.iam-role }}
-        role-session-name: github-actions-terraform
         role-duration-seconds: 7200
         aws-region: ${{ inputs.region }}
 
