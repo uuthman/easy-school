@@ -1,4 +1,4 @@
-name: Deploy Dev environment
+name: Deploy Staging environment
 
 concurrency:
   group: deploy-${{ vars.ENVIRONMENT }}
