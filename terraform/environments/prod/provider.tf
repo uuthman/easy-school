@@ -15,5 +15,4 @@ terraform {
 
 provider "aws" {
   region = var.default_region
-  version = "5.67.0"
 }
