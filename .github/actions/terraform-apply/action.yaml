@@ -43,5 +43,5 @@ runs:
       with:
         name: terraform ips
         path: |
-          ${{ inputs.environment }}_ip.txt
-      working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
+          terraform/environments/${{ inputs.environment }}/{{ inputs.environment }}_ip.txt
+      
