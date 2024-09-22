@@ -16,7 +16,7 @@ runs:
       run: |
          ENV_IP=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)
         
-         
+         echo $ENV_IP
          # Update the Ansible inventory with the correct environment and IP
           cd ../../../
          echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
@@ -24,6 +24,11 @@ runs:
          echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
          echo "ansible_user=ubuntu" >> ansible/inventories/${{ inputs.environment }}
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
+
+
+    - name: Print Ansible Inventory
+      run: cat ansible/inventories/${{ inputs.environment }}
+      shell: bash
 
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -33,6 +38,7 @@ runs:
     - name: Commit and Push Inventory Changes
       shell: bash
       run: |
+        git checkout ansible
         git config --global user.name 'uuthman'
         git config --global user.email 'uthmanayinde@gmail.com'
         git add ansible/inventories/${{ inputs.environment }} 
