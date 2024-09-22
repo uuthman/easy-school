@@ -10,19 +10,15 @@ runs:
 
 
   steps:
-    - name: Get Terraform Output
-      id: tf-output
-      shell: bash
-      run: |
-        echo "::set-output name=${{ inputs.environment }}_ip::$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)"
-      working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
-
 
     - name: Update Ansible Inventory
       shell: bash
       run: |
          ENV_IP=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)
+        
+         
          # Update the Ansible inventory with the correct environment and IP
+          cd ../../../
          echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
          echo "${{ inputs.environment }}-server ansible_host=${ENV_IP}" >> ansible/inventories/${{ inputs.environment }}
          echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
