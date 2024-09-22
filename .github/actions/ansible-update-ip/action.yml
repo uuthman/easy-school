@@ -10,38 +10,52 @@ runs:
 
 
   steps:
+    - name: Get Terraform Output
+      id: tf-output
+      shell: bash
+      run: |
+        echo "::set-output name=${{ inputs.environment }}_ip::$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)"
+      working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
 
     - name: Update Ansible Inventory
       shell: bash
       run: |
-         ENV_IP=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)
-        
-         echo $ENV_IP
-         # Update the Ansible inventory with the correct environment and IP
-         cd ../../../
-         pwd
-         echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
-         echo "${{ inputs.environment }}-server ansible_host=${ENV_IP}" >> ansible/inventories/${{ inputs.environment }}
-         echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
-         echo "ansible_user=ubuntu" >> ansible/inventories/${{ inputs.environment }}
-      working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
+        cd ../../../
+        echo "[${{ inputs.environment }}]" > inventories/${{ inputs.environment }}
+        ${{ steps.tf-output.outputs[format('{0}_ip',inputs.environment)] }}
+        echo "${{ inputs.environment }}-server ansible_host=${{ steps.tf-output.outputs[format('{0}_ip',inputs.environment)] }}" >> ${{ inputs.environment }}
+        echo "[${{ inputs.environment }}:vars]" >> ${{ inputs.environment }}
+        echo "ansible_user=ubuntu" >> ${{ inputs.environment }}
+#         ENV_IP=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)
+#
+#         echo $ENV_IP
+#         # Update the Ansible inventory with the correct environment and IP
+#         cd ../../../
+#         pwd
+#         echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
+#         echo "${{ inputs.environment }}-server ansible_host=${ENV_IP}" >> ansible/inventories/${{ inputs.environment }}
+#         echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
+#         echo "ansible_user=ubuntu" >> ansible/inventories/${{ inputs.environment }}
+      working-directory: ansible/inventories
 
 
     - name: Print Ansible Inventory
-      run: cat ansible/inventories/${{ inputs.environment }}
-      shell: bash
-
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      with:
-        token: '${{ github.token }}'
-
-    - name: Commit and Push Inventory Changes
-      shell: bash
       run: |
-        git checkout ansible
-        git config --global user.name 'uuthman'
-        git config --global user.email 'uthmanayinde@gmail.com'
-        git add ansible/inventories/${{ inputs.environment }} 
-        git commit -m "Updated Ansible ${{ inputs.environment }} inventory with new EC2 IPs"
-        git push origin ansible
+        echo "----___----"
+        cat ansible/inventories/${{ inputs.environment }}
+        echo "----___----"
+      shell: bash
+
+#    - name: Checkout Repository
+#      uses: actions/checkout@v4
+#      with:
+#        token: '${{ github.token }}'
+#
+#    - name: Commit and Push Inventory Changes
+#      shell: bash
+#      run: |
+#        git config --global user.name 'uuthman'
+#        git config --global user.email 'uthmanayinde@gmail.com'
+#        git add ansible/inventories/${{ inputs.environment }}
+#        git commit -m "Updated Ansible ${{ inputs.environment }} inventory with new EC2 IPs"
+#        git push origin ansible
