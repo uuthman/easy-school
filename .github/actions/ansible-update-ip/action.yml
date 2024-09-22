@@ -14,14 +14,13 @@ runs:
       id: tf-output
       shell: bash
       run: |
-        FULL_OUTPUT=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)
-        IP=$(echo "$FULL_OUTPUT" | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')
-        if [ -z "$IP" ]; then
-          echo "Failed to extract IP address from Terraform output"
-          exit 1
-        fi
+        IP=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)
+        echo "========"
+        echo $IP
+         echo "========"
         echo "${{ inputs.environment }}_ip=$IP" >> $GITHUB_OUTPUT
-        echo "Extracted IP: $IP"
+      working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
+
     - name: Update Ansible Inventory
       shell: bash
       run: |
