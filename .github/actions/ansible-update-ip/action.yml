@@ -25,6 +25,11 @@ runs:
          echo "ansible_user=ubuntu" >> ansible/inventories/${{ inputs.environment }}
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
 
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: '${{ github.token }}'
+
     - name: Commit and Push Inventory Changes
       shell: bash
       run: |
