@@ -21,10 +21,13 @@ runs:
     - name: Update Ansible Inventory
       shell: bash
       run: |
-        echo "[dev]" > ansible/inventories/${{ inputs.environment }}
-        echo "dev-server ansible_host=${{ steps.tf-output.outputs.${{ inputs.environment }}_ip }}" >> inventories/${{ inputs.environment }}
-        echo "[${{ inputs.environment }}:vars]" >> inventories/${{ inputs.environment }}
-        echo "ansible_user=ubuntu" >> inventories/${{ inputs.environment }}
+        ENV_IP="${{ steps.tf-output.outputs.${{ inputs.environment }}_ip }}"
+
+        echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
+        echo "${{ inputs.environment }}-server ansible_host=${ENV_IP}" >> ansible/inventories/${{ inputs.environment }}
+        echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
+        echo "ansible_user=ubuntu" >> ansible/inventories/${{ inputs.environment }}
+
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
 
     - name: Commit and Push Inventory Changes
