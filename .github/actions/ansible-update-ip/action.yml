@@ -14,15 +14,12 @@ runs:
       id: tf-output
       shell: bash
       run: |
-        echo "::set-output name=${{ inputs.environment }}_ip::$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)"
+        echo "${{ inputs.environment }}_ip=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)" >> $GITHUB_OUTPUT
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
 
     - name: Update Ansible Inventory
       shell: bash
       run: |
-        echo "----___----"
-        pwd
-        echo "----___----"
         echo "[${{ inputs.environment }}]" > ${{ inputs.environment }}
         echo "${{ inputs.environment }}-server ansible_host=${{ steps.tf-output.outputs[format('{0}_ip',inputs.environment)] }}" >> ${{ inputs.environment }}
         echo "[${{ inputs.environment }}:vars]" >> ${{ inputs.environment }}
@@ -42,9 +39,7 @@ runs:
 
     - name: Print Ansible Inventory
       run: |
-        echo "----___----"
         cat ansible/inventories/${{ inputs.environment }}
-        echo "----___----"
       shell: bash
 
 #    - name: Checkout Repository
