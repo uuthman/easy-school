@@ -20,7 +20,6 @@ runs:
     - name: Update Ansible Inventory
       shell: bash
       run: |
-        cd ../../../
         echo "[${{ inputs.environment }}]" > inventories/${{ inputs.environment }}
         ${{ steps.tf-output.outputs[format('{0}_ip',inputs.environment)] }}
         echo "${{ inputs.environment }}-server ansible_host=${{ steps.tf-output.outputs[format('{0}_ip',inputs.environment)] }}" >> ${{ inputs.environment }}
