@@ -29,7 +29,7 @@ runs:
       shell: bash
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
 
-    - name: 'Extract ip: ${{ vars.ENVIRONMENT }}'
+    - name: 'Extract ip: ${{ inputs.environment }}'
       run: |
         terraform output -json > ${{ inputs.environment }}_ips.json
           jq -r '.${{ inputs.environment }}_ec2_public_ip.value' ${{ inputs.environment }}_ips.json > ${{ inputs.environment }}_ip.txt
