@@ -28,3 +28,17 @@ runs:
       run: terraform apply -var-file=${{ inputs.environment }}.tfvars -auto-approve
       shell: bash
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
+
+    - name: 'Extract ip: ${{ vars.ENVIRONMENT }}'
+      run: |
+        terraform output -json > ${{ inputs.environment }}_ips.json
+          jq -r '.${{ inputs.environment }}_ec2_public_ip.value' ${{ inputs.environment }}_ips.json > ${{ inputs.environment }}_ip.txt
+      working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
+      shell: bash
+
+    - name: 'Upload ip artifacts'
+      uses: actions/upload-artifact@v4
+      with:
+        name: terraform ips
+        paths: |
+          ${{ inputs.environment }}_ip.txt
