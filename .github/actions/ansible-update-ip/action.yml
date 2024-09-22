@@ -20,8 +20,10 @@ runs:
     - name: Update Ansible Inventory
       shell: bash
       run: |
+        echo "----___----"
+        pwd
+        echo "----___----"
         echo "[${{ inputs.environment }}]" > ${{ inputs.environment }}
-        ${{ steps.tf-output.outputs[format('{0}_ip',inputs.environment)] }}
         echo "${{ inputs.environment }}-server ansible_host=${{ steps.tf-output.outputs[format('{0}_ip',inputs.environment)] }}" >> ${{ inputs.environment }}
         echo "[${{ inputs.environment }}:vars]" >> ${{ inputs.environment }}
         echo "ansible_user=ubuntu" >> ${{ inputs.environment }}
