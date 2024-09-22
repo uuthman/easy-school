@@ -1,0 +1,37 @@
+name: "Update public ip on anisble inventories"
+description: "This automate the process of updating ip in anisble inventories"
+
+inputs:
+  environment:
+    type: string
+    required: true
+runs:
+  using: "composite"
+
+
+  steps:
+    - name: Get Terraform Output
+      id: tf-output
+      shell: bash
+      run: |
+        echo "::set-output name=${{ inputs.environment }}_ip::$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)"
+      working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
+
+
+    - name: Update Ansible Inventory
+      shell: bash
+      run: |
+        echo "[dev]" > ansible/inventories/${{ inputs.environment }}
+        echo "dev-server ansible_host=${{ steps.tf-output.outputs.${{ inputs.environment }}_ip }}" >> inventories/${{ inputs.environment }}
+        echo "[${{ inputs.environment }}:vars]" >> inventories/${{ inputs.environment }}
+        echo "ansible_user=ubuntu" >> inventories/${{ inputs.environment }}
+      working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
+
+    - name: Commit and Push Inventory Changes
+      shell: bash
+      run: |
+        git config --global user.name 'uuthman'
+        git config --global user.email 'uthmanayinde@gmail.com'
+        git add ansible/inventories/${{ inputs.environment }} 
+        git commit -m "Updated Ansible ${{ inputs.environment }} inventory with new EC2 IPs"
+        git push

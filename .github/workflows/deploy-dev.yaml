@@ -42,3 +42,8 @@ jobs:
           environment: ${{ vars.ENVIRONMENT }}
           region: ${{ vars.AWS_REGION }}
           iam-role: ${{ vars.TF_AWS_ROLE }}
+
+      - name: "Update ip on Ansible ${{ vars.ENVIRONMENT }} inventory"
+        uses: ./.github/actions/ansible-update-ip
+        with:
+          environment: ${{ vars.ENVIRONMENT }}
