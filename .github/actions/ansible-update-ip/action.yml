@@ -14,7 +14,8 @@ runs:
       id: tf-output
       shell: bash
       run: |
-        echo "${{ inputs.environment }}_ip=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)" >> $GITHUB_OUTPUT
+        IP=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)
+        echo "${{ inputs.environment }}_ip=$IP" >> $GITHUB_OUTPUT
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
 
     - name: Update Ansible Inventory
