@@ -1,0 +1,5 @@
+.github
+.git
+terraform
+helm
+k8s

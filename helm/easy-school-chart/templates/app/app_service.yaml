@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: easy-school-app-svc
+  namespace: {{ include "easy-school.namespace" .  }}
+  labels:
+    {{- include "easy-school.labels" . | nindent 4}}
+spec:
+  selector:
+    {{- include "easy-school.labels" . | nindent 4}}
+  type: NodePort
+  ports:
+    - name: {{ .Values.app.service.name }}
+      port: {{ .Values.app.service.port }}
+      protocol: {{ .Values.app.service.protocol }}
+      targetPort: {{ .Values.app.service.targetPort }}
+      nodePort: {{ .Values.app.service.nodePort }}

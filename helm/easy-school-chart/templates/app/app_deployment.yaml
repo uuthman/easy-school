@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ include "easy-school.namespace" .  }}
+  name: easy-school-app-deployment
+  labels:
+    {{- include "easy-school.labels" . | nindent 4}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+  {{- include "easy-school.labels" . | nindent 6}}
+  template:
+    metadata:
+      labels:
+        {{- include "easy-school.labels" . | nindent 8}}
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          command: ['sh', '-c', 'until nc -w 5 -z easy-school-database-svc 5432; do echo waiting for db; sleep 2; done;']
+      containers:
+        - name: {{ .Values.app.container.name }}
+          image: {{ .Values.app.container.image }}:{{ .Values.app.container.tag }}
+          envFrom:
+            - configMapRef:
+                name: easy-school-app-config
+            - secretRef:
+                name: easy-school-app-secret
+          ports:
+            - containerPort: {{ .Values.app.ports.containerPort }}
+              protocol: {{ .Values.app.ports.protocol }}
+

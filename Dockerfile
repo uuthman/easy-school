@@ -23,7 +23,7 @@ COPY --from=build /usr/local/bin/ /usr/local/bin/
 
 COPY . /app
 
-ENV PYTHONUNBUFFERED 1
+#ENV PYTHONUNBUFFERED 1
 
 EXPOSE 8000
 

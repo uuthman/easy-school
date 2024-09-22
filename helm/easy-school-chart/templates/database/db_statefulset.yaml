@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ include "easy-school.namespace" .  }}
+  name: easy-school-database-sts
+  labels:
+    {{- include "easy-school.labels" . | nindent 4}}
+spec:
+  selector:
+    matchLabels:
+      {{- include "easy-school.labels" . | nindent 6}}
+  serviceName: easy-school-database-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "easy-school.labels" . | nindent 8}}
+    spec:
+      containers:
+        - name: {{ .Values.database.containers.name }}
+          image: {{ .Values.database.containers.image }}
+          ports:
+            - containerPort: {{ .Values.database.containers.containerPort }}
+          env:
+            - name: POSTGRES_DB
+              value: easy_school
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: easy-school-database-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: easy-school-database-secret
+                  key: password
+          volumeMounts:
+            - mountPath: /var/lib/postgres/data
+              name: data
+          resources:
+            requests:
+              cpu: {{ .Values.database.resources.cpu }}
+              memory: {{ .Values.database.resources.memory }}
+          livenessProbe:
+            exec:
+              command:
+                - bash
+                - -c
+                - pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: easy-school-database-pvc
