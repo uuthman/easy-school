@@ -1,0 +1,5 @@
+---
+helm_version: "v3.11.1"
+helm_repo_url: "https://github.com/uuthman/easy-school"
+helm_repo_name: "easy-school"
+helm_chart_path: "helm/easy-school-chart"
