@@ -21,13 +21,11 @@ runs:
     - name: Update Ansible Inventory
       shell: bash
       run: |
-        ENV_IP="${{ steps.tf-output.outputs.${{ inputs.environment }}_ip }}"
-
-        echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
-        echo "${{ inputs.environment }}-server ansible_host=${ENV_IP}" >> ansible/inventories/${{ inputs.environment }}
-        echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
-        echo "ansible_user=ubuntu" >> ansible/inventories/${{ inputs.environment }}
-
+         ENV_IP="${{ steps.tf-output.outputs.${{ inputs.environment }}_ip }}"
+         echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
+         echo "${{ inputs.environment }}-server ansible_host=${ENV_IP}" >> ansible/inventories/${{ inputs.environment }}
+         echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
+         echo "ansible_user=ubuntu" >> ansible/inventories/${{ inputs.environment }}
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
 
     - name: Commit and Push Inventory Changes
@@ -37,4 +35,4 @@ runs:
         git config --global user.email 'uthmanayinde@gmail.com'
         git add ansible/inventories/${{ inputs.environment }} 
         git commit -m "Updated Ansible ${{ inputs.environment }} inventory with new EC2 IPs"
-        git push
+        git push origin ansible
