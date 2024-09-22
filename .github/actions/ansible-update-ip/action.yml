@@ -18,7 +18,8 @@ runs:
         
          echo $ENV_IP
          # Update the Ansible inventory with the correct environment and IP
-          cd ../../../
+         cd ../../../
+         pwd
          echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
          echo "${{ inputs.environment }}-server ansible_host=${ENV_IP}" >> ansible/inventories/${{ inputs.environment }}
          echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
