@@ -15,7 +15,8 @@ runs:
       shell: bash
       run: |
         IP=$(terraform output -no-color -raw ${{ inputs.environment }}_ec2_public_ip)
-        IP=$(trim $IP)
+        IP=${IP##* }
+        IP=${IP%% *}
         echo "===="
         echo $IP
         echo "===="
