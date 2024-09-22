@@ -21,7 +21,8 @@ runs:
     - name: Update Ansible Inventory
       shell: bash
       run: |
-         ENV_IP="${{ steps.tf-output.outputs.${{ inputs.environment }}_ip }}"
+         ENV_IP=$(terraform output -raw ${{ inputs.environment }}_ec2_public_ip)
+         # Update the Ansible inventory with the correct environment and IP
          echo "[${{ inputs.environment }}]" > ansible/inventories/${{ inputs.environment }}
          echo "${{ inputs.environment }}-server ansible_host=${ENV_IP}" >> ansible/inventories/${{ inputs.environment }}
          echo "[${{ inputs.environment }}:vars]" >> ansible/inventories/${{ inputs.environment }}
