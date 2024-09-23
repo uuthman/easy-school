@@ -14,20 +14,11 @@ runs:
       id: tf-output
       shell: bash
       run: |
-         # Capture Terraform output
-        TERRAFORM_OUTPUT=$(terraform output ${{ inputs.environment }}_ec2_public_ip)
-        echo "Raw Terraform output: $TERRAFORM_OUTPUT"
-        
-        # Remove quotes and newlines
-        IP=$(echo $TERRAFORM_OUTPUT | tr -d '"' | tr -d '\n')
-        
-        if [[ ! $IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "Error: Invalid IP address format: $IP"
-          exit 1
-        fi
-        
-        echo "Processed IP: $IP"
-         echo "${{ inputs.environment }}_ip=$IP" >> $GITHUB_OUTPUT
+        IP=$(terraform output ${{ inputs.environment }}_ec2_public_ip)
+        echo "========"
+        echo $IP
+        echo "========"
+        echo "${{ inputs.environment }}_ip=$IP" >> $GITHUB_OUTPUT
       working-directory: ${{ format('terraform/environments/{0}', inputs.environment) }}
 
     - name: Update Ansible Inventory
