@@ -15,10 +15,10 @@ spec:
       labels:
         {{- include "easy-school.labels" . | nindent 8}}
     spec:
-{{/*      initContainers:*/}}
-{{/*        - name: wait-for-db*/}}
-{{/*          image: busybox*/}}
-{{/*          command: ['sh', '-c', 'until nc -w 5 -z easy-school-database-svc 5432; do echo waiting for db; sleep 2; done;']*/}}
+      initContainers:
+        - name: wait-for-database
+          image: busybox
+          command: ['sh', '-c', 'until nc -w 5 -z easy-school-database-svc 5432; do echo waiting for db; sleep 2; done;']
       containers:
         - name: {{ .Values.app.container.name }}
           image: {{ .Values.app.container.image }}:{{ .Values.app.container.tag }}
