@@ -1,0 +1,4 @@
+---
+
+- include_tasks: install_agrocd.yaml
+- include_tasks: create_app.yaml

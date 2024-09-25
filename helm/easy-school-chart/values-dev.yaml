@@ -1,0 +1,36 @@
+app:
+  replicas: 1
+  env: dev
+  container:
+    image: uthutu/easy-school
+    tag: beta-1
+    name: easy-school
+  ports:
+    containerPort: 8000
+    protocol: TCP
+  service:
+      name: http
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+      nodePort: 30007
+hpa:
+  enabled: false
+
+
+database:
+  pvc:
+    storage: 1Gi
+  service:
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
+  containers:
+    name: db
+    image: postgres:15
+    containerPort: 5432
+  resources:
+    cpu: 300m
+    memory: 256Mi
+
+

@@ -1,0 +1,6 @@
+[dev]
+dev-server ansible_host=54.197.145.90
+
+[dev:vars]
+ansible_user=ubuntu
+env=dev

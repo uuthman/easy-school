@@ -1,0 +1,45 @@
+- name: Define the ArgoCD Application manifest
+  vars:
+    namespace_prefix: "two-tier"
+  copy:
+    content: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+
+      metadata:
+        name: k8s-easy-school
+        namespace: argocd
+
+      spec:
+        project: easy-school
+        source:
+          repoURL: 'https://github.com/uuthman/easy-school'
+          path: helm/easy-school-chart
+          targetRevision: ansible
+          helm:
+            valueFiles:
+              - "./values-{{ env }}.yaml"
+        destination:
+          server: 'https://kubernetes.default.svc'
+          namespace: "{{ namespace_prefix }}-{{ env }}"
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+  dest: /tmp/my-argocd-app.yaml
+
+- name: Apply the ArgoCD Application manifest
+  kubernetes.core.k8s:
+    state: present
+    definition: '{{ lookup(''file'', ''/tmp/my-argocd-app.yaml'') }}'
+
+- name: Wait for the ArgoCD Application to sync
+  kubernetes.core.k8s_info:
+    api_version: argoproj.io/v1alpha1
+    kind: Application
+    namespace: argocd
+    name: my-app
+  register: app_status
+  until: 'app_status.resources[0].status.sync.status == "Synced"'
+  retries: 10
+  delay: 30

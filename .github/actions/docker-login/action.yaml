@@ -1,0 +1,24 @@
+name: "This logs in to docker"
+description: "Allows us to login to docker"
+
+inputs:
+  username:
+    type: string
+    required: true
+  token:
+    type: string
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.username }}
+        password: ${{ inputs.token }}

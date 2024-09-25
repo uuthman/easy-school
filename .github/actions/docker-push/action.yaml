@@ -1,0 +1,21 @@
+name: "This push in to docker"
+description: "Allows us to push to docker"
+
+inputs:
+  username:
+    type: string
+    required: true
+
+
+runs:
+  using: "composite"
+
+
+  steps:
+    - name: Build and Push action
+      uses: docker/build-push-action@v6
+      with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ inputs.username }}/todo-app:${{github.run_id}}

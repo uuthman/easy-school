@@ -4,21 +4,10 @@
   become: yes
   roles:
     - docker
+    - role: andrewrothstein.kubectl
+    - role: gantsign.minikube
     - minikube
     - helm
-
-- name: Setup Development Environment
-  hosts: staging
-  become: yes
-  roles:
-    - docker
-    - minikube
-    - helm
-
-- name: Setup Production Environment
-  hosts: prod
-  become: yes
-  roles:
-    - docker
-    - minikube
-    - helm
+    - prometheus_grafana
+    - create_namespace
+    - argocd

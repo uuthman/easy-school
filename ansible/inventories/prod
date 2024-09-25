@@ -1,0 +1,6 @@
+[prod]
+dev-server ansible_host=dev.example.com
+
+[prod:vars]
+ansible_user=ubuntu
+env=prod

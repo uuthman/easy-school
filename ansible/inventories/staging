@@ -1,0 +1,6 @@
+[staging]
+dev-server ansible_host=dev.example.com
+
+[staging:vars]
+ansible_user=ubuntu
+env=staging

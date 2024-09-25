@@ -24,9 +24,12 @@
   apt:
     update_cache: 'yes'
 
-- name: Install Docker
+- name: Install Docker packages
   apt:
-    name: docker-ce
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
     state: present
 
 - name: Ensure Docker service is running
@@ -34,3 +37,49 @@
     name: docker
     state: started
     enabled: yes
+  notify:
+    - Restart Docker
+
+- name: Add user to docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  become: yes
+  register: add_user_result
+
+#- name: Refresh group membership
+#  command: "newgrp docker"
+#  become: yes
+#  when: add_user_result.changed
+
+- name: Reset SSH connection to allow user changes to affect 'ansible_user'
+  meta: reset_connection
+
+- name: Inform user to log out and back in
+  debug:
+    msg: "User {{ ansible_user }} has been added to the Docker group. Please log out and back in for the changes to take effect."
+  when: add_user_result.changed
+
+- name: Test Docker access
+  command: "docker ps"
+  become: yes
+  when: add_user_result.changed
+
+
+- name: Ensure Docker socket is accessible
+  command: timeout 5 docker info
+  register: docker_check
+  changed_when: false
+  failed_when: false
+  become: 'no'
+
+- name: Fail if Docker is not accessible
+  fail:
+    msg: >-
+      Docker is not accessible. Please ensure the user is in the docker group
+      and try again.
+  when: docker_check.rc != 0
+
+
+

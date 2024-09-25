@@ -8,12 +8,12 @@
 
 - name: Download helm
   get_url:
-    url: "{{ helm_url }}"
-    dest: "/tmp/{{ helm_archive }}"
+    url: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
+    dest: "/tmp/helm-{{ helm_version }}-linux-amd64.tar.gz"
 
 - name: Extract Helm archive
   unarchive:
-    src: "/tmp/{{ helm_archive }}"
+    src: "/tmp/helm-{{ helm_version }}-linux-amd64.tar.gz"
     dest: /tmp
     remote_src: yes
 
