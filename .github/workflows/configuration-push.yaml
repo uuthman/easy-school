@@ -34,5 +34,7 @@ jobs:
       - name: Run Ansible Playbook
         shell: bash
         run: |
+          ansible-galaxy role install andrewrothstein.kubectl
+          ansible-galaxy role install gantsign.minikube
           ansible-playbook -i inventories/${{ vars.ENVIRONMENT }} site.yaml
         working-directory: ansible
