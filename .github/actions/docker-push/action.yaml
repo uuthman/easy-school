@@ -18,4 +18,4 @@ runs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ inputs.username }}/todo-app:${{github.run_id}}
+          tags: "${{ inputs.username }}/easy-school:${{github.run_id}}"
