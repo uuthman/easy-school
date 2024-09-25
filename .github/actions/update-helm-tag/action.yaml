@@ -20,7 +20,7 @@ runs:
     - name: Update tag in Helm chart
       shell: bash
       run: |
-        sed -i 's/tag: .*/tag: "${{github.run_id}}"/' helm/todo-chart/values-${{ inputs.environment }}.yaml
+        sed -i 's/tag: .*/tag: "${{github.run_id}}"/' helm/easy-school-chart/values-${{ inputs.environment }}.yaml
 
     - name: Commit and push changes
       shell: bash
