@@ -12,6 +12,13 @@ runs:
 
 
   steps:
+    - name: Validate Username
+      shell: bash
+      run: |
+          if [[ -z "${{ inputs.username }}" ]]; then
+            echo "Error: username input is required."
+            exit 1
+          fi
     - name: Build and Push action
       uses: docker/build-push-action@v6
       with:
