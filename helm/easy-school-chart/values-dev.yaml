@@ -3,7 +3,7 @@ app:
   env: dev
   container:
     image: uthutu/easy-school
-    tag: beta-1
+    tag: "11032132524"
     name: easy-school
   ports:
     containerPort: 8000
