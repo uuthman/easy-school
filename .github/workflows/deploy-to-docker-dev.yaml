@@ -3,7 +3,7 @@ name: Deployment to Docker Dev
 on:
   push:
     branches:
-      - develop
+      - ansible
     paths-ignore:
       - 'helm/**'
       - 'README.md'
