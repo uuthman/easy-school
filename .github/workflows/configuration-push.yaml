@@ -1,0 +1,38 @@
+name: Run Ansible Playbook on EC2
+
+on:
+  workflow_dispatch:
+
+    inputs:
+      ip:
+        type: string
+        required: true
+
+jobs:
+  ansible:
+    environment: dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ANSIBLE_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ inputs.ip }} >> ~/.ssh/known_hosts
+
+      - name: Install Ansible
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install ansible -y
+
+      - name: Run Ansible Playbook
+        shell: bash
+        run: |
+          ansible-playbook -i inventories/${{ vars.ENVIRONMENT }} site.yaml
+        working-directory: ansible
