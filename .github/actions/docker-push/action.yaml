@@ -25,4 +25,4 @@ runs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: "${{ inputs.username }}/easy-school:${{github.run_id}}"
+          tags: "uthutu/easy-school:${{github.run_id}}"
